@@ -30,6 +30,7 @@ function TransactionForm() {
     const [valid, setValid] = useState(false)
 
     useEffect(() => {
+        console.log(JSON.stringify(cardNumber))
         //validate data
         let isValid = true
         const cardNum_regex = /^\d{16}$/
@@ -68,11 +69,17 @@ function TransactionForm() {
         e.preventDefault()
 
         sendTransaction().then(res => {
-            alert(`The transaction with id ${res.RequestId} was successful! \n Amount withdrawn: ${res.Amount}`)
+            if (res.error) {
+                alert(`The transaction was unsuccessful!\nError code: ${res.error}\nError: ${res.message}`)
+            } else {
+                alert(`The transaction with id ${res.RequestId} was successful! \n Amount withdrawn: ${res.Amount}`)
+            }
+
             clearForm()
         })
     }
 
+    //function for clearing all the fields in the form after submission
     const clearForm = () => {
         setCardNumber("")
         setExpDate("")
@@ -93,11 +100,14 @@ function TransactionForm() {
         return res.json()
     }
 
+    // handle change the cardNum
     const changeCardNum = (e) => {
         const regex = /^\d*$/
         if (e.target.value.match(regex)) {
             setCardNumber(e.target.value)
         }
+
+
     }
 
     const changeExpDate = (e) => {
